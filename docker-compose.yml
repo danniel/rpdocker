@@ -1,0 +1,96 @@
+version: '3.9'
+
+
+services:
+
+  rapidpro-db:
+    hostname: rapidpro-db
+    image: postgis:14-3.3
+    ports:
+      - 5434:5432
+    env_file:
+      - .env
+    volumes:
+      - database-data:/var/lib/postgresql/data/
+    restart: on-failure
+
+  rapidpro:
+    container_name: rapidpro
+    build:
+      context: .
+      dockerfile: rapidpro.Dockerfile
+    env_file:
+      - .env
+    environment:
+      - "PYTHONUNBUFFERED=1"
+    restart: on-failure
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - rapidpro-db
+
+  rapidpro-elastic:
+    hostname: rapidpro-elastic
+    image: elasticsearch:7.10.1
+    ports:
+      - 9200:9200
+      - 9300:9300
+    env_file:
+      - .env
+    restart: on-failure
+
+  rapidpro-mailroom:
+    container_name: rapidpro-mailroom
+    build:
+      context: .
+      dockerfile: mailroom.Dockerfile
+    env_file:
+      - .env
+    restart: on-failure
+    ports:
+      - 8070:8070
+    depends_on:
+      - rapidpro-db
+
+  rapidpro-courier:
+    container_name: rapidpro-courier
+    build:
+      context: .
+      dockerfile: courier.Dockerfile
+    env_file:
+      - .env
+    restart: on-failure
+    ports:
+      - 8080:8080
+    depends_on:
+      - rapidpro-db
+      - rapidpro-elastic
+
+  # rapidpro-archiver:
+  #   container_name: rapidpro-archiver
+  #   build:
+  #     context: .
+  #     dockerfile: archiver.Dockerfile
+  #   env_file:
+  #     - .env
+  #   restart: on-failure
+  #   depends_on:
+  #     - rapidpro-db
+  #     - rapidpro-elastic
+
+  # rapidpro-indexer:
+  #   container_name: rapidpro-indexer
+  #   build:
+  #     context: .
+  #     dockerfile: indexer.Dockerfile
+  #   env_file:
+  #     - .env
+  #   restart: on-failure
+  #   depends_on:
+  #     - rapidpro-db
+  #     - rapidpro-elastic
+      
+volumes:
+  database-data:
+    name: rapidpro-pgdata
