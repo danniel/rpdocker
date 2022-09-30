@@ -1,11 +1,10 @@
 version: '3.9'
 
-
 services:
 
   rapidpro-db:
     hostname: rapidpro-db
-    image: postgis:14-3.3
+    image: postgis/postgis:14-3.3-alpine
     ports:
       - 5434:5432
     env_file:
@@ -14,11 +13,21 @@ services:
       - database-data:/var/lib/postgresql/data/
     restart: on-failure
 
-  rapidpro:
-    container_name: rapidpro
+  rapidpro-redis:
+    hostname: rapidpro-redis
+    image: redis:6.2-alpine
+    ports:
+      - 6379:6379
+    env_file:
+      - .env
+    command: redis-server
+    restart: on-failure
+
+  rapidpro-temba:
+    container_name: rapidpro-temba
     build:
       context: .
-      dockerfile: rapidpro.Dockerfile
+      dockerfile: temba.Dockerfile
     env_file:
       - .env
     environment:
@@ -29,6 +38,7 @@ services:
       - 443:443
     depends_on:
       - rapidpro-db
+      - rapidpro-redis
 
   rapidpro-elastic:
     hostname: rapidpro-elastic
@@ -52,6 +62,7 @@ services:
       - 8070:8070
     depends_on:
       - rapidpro-db
+      - rapidpro-redis
 
   rapidpro-courier:
     container_name: rapidpro-courier
@@ -66,7 +77,9 @@ services:
     depends_on:
       - rapidpro-db
       - rapidpro-elastic
+      - rapidpro-redis
 
+  ## TODO
   # rapidpro-archiver:
   #   container_name: rapidpro-archiver
   #   build:
@@ -79,6 +92,7 @@ services:
   #     - rapidpro-db
   #     - rapidpro-elastic
 
+  ## TODO
   # rapidpro-indexer:
   #   container_name: rapidpro-indexer
   #   build:
