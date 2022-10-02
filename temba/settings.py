@@ -1,13 +1,40 @@
-import copy
+import os
 import warnings
 from django.utils.translation import gettext_lazy as _
 
 from .settings_common import *  # noqa
 
 
-STORAGE_URL = "http://example.com/media"
+ADMINS=()
+
+EMAIL_HOST = os.getenv("EMAIL_HOST", "localhost")
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "server@temba.io")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "mypassword")
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "server@temba.io")
+EMAIL_USE_TLS = True
+EMAIL_TIMEOUT = 10
+
+SECRET_KEY = os.getenv("SECRET_KEY", "your secret key")
+
+_default_database_config = {
+    "ENGINE": "django.contrib.gis.db.backends.postgis",
+    "NAME": os.getenv("POSTGRES_DB","temba"),
+    "USER": os.getenv("POSTGRES_USER","temba"),
+    "PASSWORD": os.getenv("POSTGRES_PASSWORD","temba"),
+    "HOST": os.getenv("POSTGRES_HOSTNAME","localhost"),
+    "PORT": os.getenv("POSTGRES_PORT","5432"),
+    "ATOMIC_REQUESTS": True,
+    "CONN_MAX_AGE": 60,
+    "OPTIONS": {},
+    "DISABLE_SERVER_SIDE_CURSORS": True,
+}
+DATABASES = {"default": _default_database_config, "readonly": _default_database_config.copy()}
+
+DOMAIN_NAME = os.getenv("DOMAIN_NAME","example.com")
+
+STORAGE_URL = f"http://{DOMAIN_NAME}/media"
 BRANDING = {
-    "example.com": {
+    DOMAIN_NAME: {
         "slug": "rapidpro",
         "name": "RapidPro",
         "org": "UNICEF",
@@ -17,10 +44,10 @@ BRANDING = {
         "welcome_topup": 1000,
         "email": "join@rapidpro.io",
         "support_email": "noreply@example.com",
-        "link": "https://example.com",
-        "api_link": "https://example.com",
+        "link": f"https://{DOMAIN_NAME}",
+        "api_link": f"https://{DOMAIN_NAME}",
         "docs_link": "http://docs.rapidpro.io",
-        "domain": "example.com",
+        "domain": DOMAIN_NAME,
         "ticket_domain": "tickets.rapidpro.io",
         "favico": "brands/rapidpro/rapidpro.ico",
         "splash": "brands/rapidpro/splash.jpg",
@@ -37,9 +64,13 @@ BRANDING = {
         "support_widget": False,
     }
 }
-DEFAULT_BRAND = os.environ.get("DEFAULT_BRAND", "example.com")
+DEFAULT_BRAND = os.environ.get("DEFAULT_BRAND", DOMAIN_NAME)
 
-ALLOWED_HOSTS = ["*", "https://example.com"]
+ALLOWED_HOSTS = ["*", f".{DOMAIN_NAME}"]
+
+REDIS_HOST = os.environ.get("REDIS_HOST", "localhost")
+REDIS_PORT = 6379
+REDIS_DB = 10 if TESTING else 15  # we use a redis db of 10 for testing so that we maintain caches for dev
 
 CACHES = {
     "default": {
@@ -51,8 +82,8 @@ CACHES = {
 
 INTERNAL_IPS = ("127.0.0.1",)
 
-MAILROOM_URL = os.environ.get('MAILROOM_URL', 'http://localhost:8090')
-MAILROOM_AUTH_TOKEN = None
+MAILROOM_URL = os.environ.get("MAILROOM_URL", "http://localhost:8090")
+MAILROOM_AUTH_TOKEN = os.environ.get("MAILROOM_AUTH_TOKEN", "")
 
 INSTALLED_APPS = INSTALLED_APPS + ("storages",)
 
