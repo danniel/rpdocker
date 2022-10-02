@@ -48,6 +48,8 @@ services:
       - 9300:9300
     env_file:
       - .env
+    environment:
+      - logger.level=WARN 
     restart: on-failure
 
   rapidpro-mailroom:
@@ -57,6 +59,8 @@ services:
       dockerfile: mailroom.Dockerfile
     env_file:
       - .env
+    environment:
+      - LOG_LEVEL=warning
     restart: on-failure
     ports:
       - 8070:8070
@@ -71,6 +75,8 @@ services:
       dockerfile: courier.Dockerfile
     env_file:
       - .env
+    environment:
+      - LOG_LEVEL=warning
     restart: on-failure
     ports:
       - 8080:8080
@@ -87,10 +93,13 @@ services:
   #     dockerfile: archiver.Dockerfile
   #   env_file:
   #     - .env
+  #   environment:
+  #     - LOG_LEVEL=info
   #   restart: on-failure
   #   depends_on:
   #     - rapidpro-db
   #     - rapidpro-elastic
+  #     - rapidpro-redis
 
   ## TODO
   # rapidpro-indexer:
@@ -100,10 +109,13 @@ services:
   #     dockerfile: indexer.Dockerfile
   #   env_file:
   #     - .env
+  #   environment:
+  #     - LOG_LEVEL=info
   #   restart: on-failure
   #   depends_on:
   #     - rapidpro-db
   #     - rapidpro-elastic
+  #     - rapidpro-redis
       
 volumes:
   database-data:

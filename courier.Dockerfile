@@ -8,6 +8,6 @@ ADD https://github.com/nyaruka/courier/releases/download/v7.4.0/courier_7.4.0_li
 RUN mkdir -p /opt/courier && tar -C /opt/courier -xzf /tmp/courier_7.4.0_linux_amd64.tar.gz
 
 RUN mkdir -p /var/spool/courier
-CMD ./opt/courier/courier --debug-conf -log-level info 
+CMD ./opt/courier/courier --debug-conf -log-level $LOG_LEVEL 
 
 EXPOSE 8080
