@@ -3,10 +3,10 @@ version: '3.9'
 services:
 
   rapidpro-db:
-    hostname: rapidpro-db
-    image: postgis/postgis:14-3.3-alpine
+    container_name: rapidpro-db
+    image: postgis/postgis:14-3.3
     ports:
-      - 5434:5432
+      - "5432:5432"
     env_file:
       - .env
     volumes:
@@ -14,10 +14,10 @@ services:
     restart: on-failure
 
   rapidpro-redis:
-    hostname: rapidpro-redis
-    image: redis:6.2-alpine
+    container_name: rapidpro-redis
+    image: redis:6-bullseye
     ports:
-      - 6379:6379
+      - "6379:6379"
     env_file:
       - .env
     command: redis-server
@@ -32,24 +32,26 @@ services:
       - .env
     environment:
       - "PYTHONUNBUFFERED=1"
+      - "LOG_LEVEL=warning"
     restart: on-failure
     ports:
-      - 80:80
-      - 443:443
+      - "80:80"
+      - "443:443"
     depends_on:
       - rapidpro-db
       - rapidpro-redis
 
   rapidpro-elastic:
-    hostname: rapidpro-elastic
-    image: elasticsearch:7.10.1
+    container_name: rapidpro-elastic
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.10.2-amd64
     ports:
-      - 9200:9200
-      - 9300:9300
+      - "9200:9200"
+      - "9300:9300"
     env_file:
       - .env
     environment:
-      - logger.level=WARN 
+      - "logger.level=WARN"
+      - "discovery.type=single-node"
     restart: on-failure
 
   rapidpro-mailroom:
@@ -60,12 +62,13 @@ services:
     env_file:
       - .env
     environment:
-      - LOG_LEVEL=warning
+      - "LOG_LEVEL=warning"
     restart: on-failure
     ports:
-      - 8070:8070
+      - "8090:8090"
     depends_on:
       - rapidpro-db
+      - rapidpro-elastic
       - rapidpro-redis
 
   rapidpro-courier:
@@ -76,10 +79,10 @@ services:
     env_file:
       - .env
     environment:
-      - LOG_LEVEL=warning
+      - "LOG_LEVEL=warning"
     restart: on-failure
     ports:
-      - 8080:8080
+      - "8080:8080"
     depends_on:
       - rapidpro-db
       - rapidpro-elastic
@@ -94,7 +97,7 @@ services:
   #   env_file:
   #     - .env
   #   environment:
-  #     - LOG_LEVEL=info
+  #     - "LOG_LEVEL=info"
   #   restart: on-failure
   #   depends_on:
   #     - rapidpro-db
@@ -110,7 +113,7 @@ services:
   #   env_file:
   #     - .env
   #   environment:
-  #     - LOG_LEVEL=info
+  #     - "LOG_LEVEL=info"
   #   restart: on-failure
   #   depends_on:
   #     - rapidpro-db
