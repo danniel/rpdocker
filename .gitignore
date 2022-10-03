@@ -1,1 +1,4 @@
 .env
+
+/certbot/*
+!/certbot/.gitignore

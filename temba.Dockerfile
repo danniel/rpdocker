@@ -45,7 +45,7 @@ RUN apt install -y nodejs npm
 RUN npm install less -g --no-audit && npm install coffeescript -g --no-audit && npm install -y --no-audit
 
 # Django
-COPY temba/settings.py temba/settings.py
+COPY docker/temba/settings.py temba/settings.py
 RUN python3.9 manage.py collectstatic
 
 # Supervision
@@ -62,6 +62,8 @@ ENTRYPOINT ["/init"]
 COPY docker/s6-rc.d /etc/s6-overlay/s6-rc.d
 
 # NGINX
+COPY docker/nginx/selfsigned.crt /etc/ssl/localcerts/selfsigned.crt
+COPY docker/nginx/selfsigned.key /etc/ssl/localcerts/selfsigned.key
 COPY docker/nginx/nginx.conf /etc/nginx/sites-available/default
 
 EXPOSE 80 443
