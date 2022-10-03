@@ -1,4 +1,7 @@
 .env
 
-/certbot/*
-!/certbot/.gitignore
+/certbot/conf/*
+!/certbot/conf/.gitignore
+
+/certbot/www/*
+!/certbot/www/.gitignore
