@@ -85,7 +85,7 @@ INTERNAL_IPS = ("127.0.0.1",)
 MAILROOM_URL = os.environ.get("MAILROOM_URL", "http://localhost:8090")
 MAILROOM_AUTH_TOKEN = os.environ.get("MAILROOM_AUTH_TOKEN", "")
 
-INSTALLED_APPS = INSTALLED_APPS + ("storages",)
+INSTALLED_APPS = INSTALLED_APPS + ("storages", "tembaimporter", )
 
 MIDDLEWARE = ("temba.middleware.ExceptionMiddleware",) + MIDDLEWARE
 
