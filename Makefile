@@ -1,6 +1,8 @@
+fastbuild:
+	ENVIRONMENT=production docker-compose up -d --build
+
 build:                            ## TODO: dev/stage/prod
 	ENVIRONMENT=production docker-compose up -d --build --force-recreate --remove-orphans
-
 
 superuser:                        ## creates a superuser for the backend
 	docker-compose exec rapidpro-temba python3 manage.py createsuperuser
