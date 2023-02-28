@@ -18,8 +18,8 @@ WORKDIR /var/www/rapidpro
 ENV VIRTUAL_ENV=/opt/venv PATH=/opt/venv/bin:/root/.local/bin:$PATH
 RUN python3 -m venv $VIRTUAL_ENV \
     && python3.9 -m pip install poetry gunicorn[gevent] GDAL==$(gdal-config --version)
-RUN poetry add git+https://github.com/danniel/django-tembaimporter.git \
     && poetry install
+RUN poetry add git+https://github.com/danniel/django-tembaimporter.git
 
 # The final image
 FROM debian:bullseye-slim
