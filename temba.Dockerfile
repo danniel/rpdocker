@@ -17,7 +17,7 @@ RUN mkdir -p /var/www/ && tar -C /var/www/ -xzf /tmp/v7.4.2.tar.gz \
 WORKDIR /var/www/rapidpro
 ENV VIRTUAL_ENV=/opt/venv PATH=/opt/venv/bin:/root/.local/bin:$PATH
 RUN python3 -m venv $VIRTUAL_ENV \
-    && python3.9 -m pip install poetry gunicorn[gevent] GDAL==$(gdal-config --version)
+    && python3.9 -m pip install poetry gunicorn[gevent] GDAL==$(gdal-config --version) \
     && poetry install
 RUN poetry add git+https://github.com/danniel/django-tembaimporter.git
 
