@@ -97,3 +97,5 @@ warnings.filterwarnings(
 )
 
 STATIC_URL = "/sitestatic/"
+
+COMPRESS_CACHEABLE_PRECOMPILERS = ("text/less", )
